@@ -7,10 +7,26 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import CustomerSavingsForm from "@/components/Customer/customer-savings-form";
 import RecentTransactions from "@/components/RecentTransactions/recent-transactions";
 import SavingsSummary from "@/components/SavingSummary/savings-summary";
-import { getAllCustomers } from "@/controllers/getAllCustomers"; // Import the server action to fetch customers
+import { getAllCustomers } from "@/controllers/getAllCustomers"; // Server action to fetch customers
+import { getTodayDeposits, getTodayWithdrawals, getTotalCustomers } from "@/controllers/dashboardStats"; // Server actions for stats
 
 export default async function Home() {
   const customers = await getAllCustomers(); // Fetch customers from the server
+
+  const [customersResult, depositsResult, withdrawalsResult] = await Promise.allSettled([
+    getTotalCustomers(), // Fetch total customers
+    getTodayDeposits(), // Fetch today's deposits
+    getTodayWithdrawals(), // Fetch today's withdrawals
+  ]);
+
+  // Extract results or default to 0 in case of errors
+  const totalCustomers = customersResult.status === "fulfilled" ? customersResult.value : 0;
+  const todayDeposits = depositsResult.status === "fulfilled" ? depositsResult.value : 0;
+  const todayWithdrawals = withdrawalsResult.status === "fulfilled" ? withdrawalsResult.value : 0;
+
+  // Calculate net savings
+  const netSavings = todayDeposits - todayWithdrawals;
+  
 
   return (
     <div className="container mx-auto py-8 px-4">
@@ -40,8 +56,12 @@ export default async function Home() {
           </CardHeader>
           <CardContent>
             <Suspense fallback={<div>Loading summary...</div>}>
-              <SavingsSummary />
-            </Suspense>
+            <SavingsSummary
+                totalCustomers={totalCustomers}
+                todayDeposits={todayDeposits}
+                todayWithdrawals={todayWithdrawals}
+                netSavings={netSavings}
+              />            </Suspense>
           </CardContent>
           <CardFooter className="flex flex-col sm:flex-row gap-2">
             <Button variant="outline" size="sm" className="w-full" asChild>

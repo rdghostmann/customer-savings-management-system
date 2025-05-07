@@ -77,7 +77,7 @@ const RegisterForm = () => {
     <section className="min-h-screen bg-[#0e100f] flex items-center justify-center px-4">
       <div className="bg-[#1a1c1a] w-full max-w-md p-8 rounded-2xl shadow-lg">
         <h2 className="text-3xl font-bold text-white text-center mb-6">Create an Account</h2>
-        <p className="text-sm text-gray-400 text-center mb-8">Sign up to access our special menu</p>
+        {/* <p className="text-sm text-gray-400 text-center mb-8">Sign up to access our special menu</p> */}
 
         <form
           action={handleSubmit}
