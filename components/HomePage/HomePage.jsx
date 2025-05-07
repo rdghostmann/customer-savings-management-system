@@ -17,8 +17,8 @@ export default function HomePage() {
     <div className="min-h-screen bg-white">
       <nav className="bg-[#1a4f7c] p-4">
         <div className="container mx-auto flex items-center justify-between">
-          <Link href="/" className="text-white font-montserrat text-2xl font-bold">
-            SaveWise
+          <Link href="/" className="cursor-pointer text-white font-montserrat text-2xl font-bold">
+            <span>SaveWise</span>
           </Link>
           <div className="hidden md:flex space-x-6">
             <Link href="#services" className="text-white hover:text-[#e5f0f8]">
