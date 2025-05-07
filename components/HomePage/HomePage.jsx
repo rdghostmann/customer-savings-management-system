@@ -48,12 +48,12 @@ export default function HomePage() {
                 Unlock hidden savings and maximize your business potential with
                 expert consulting
               </p>
-              <a
-                href="#contact"
+              <Link
+                href="/dashboard"
                 className="bg-[#ff6b4a] text-white px-8 py-3 rounded-full font-semibold hover:bg-[#ff8264]"
               >
                 Get Started Today
-              </a>
+              </Link>
             </div>
             <div className="md:w-1/2">
               <img
