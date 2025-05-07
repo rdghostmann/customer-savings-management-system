@@ -50,7 +50,7 @@ export default function HomePage() {
               </p>
               <Link
                 href="/dashboard"
-                className="bg-[#ff6b4a] text-white px-8 py-3 rounded-full font-semibold hover:bg-[#ff8264]"
+                className="bg-[#ff6b4a] animate-bounce text-white px-8 py-3 rounded-full font-semibold hover:bg-[#ff8264]"
               >
                 Get Started Today
               </Link>
