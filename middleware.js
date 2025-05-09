@@ -13,23 +13,16 @@ export async function middleware(req) {
     return NextResponse.next();
   }
 
-  // const userRole = token.role; 
+  const userRole = token.role; 
 
-  // // User restrictions: Can only access /dashboard
-  // if (userRole === "user") {
-  //   if (url.pathname === "/admin" || url.pathname === "/login" || url.pathname === "/register") {
-  //     return NextResponse.redirect(new URL("/dashboard", req.url));
-  //   }
-  // }
+   // Admin restrictions: Can only access /admin
+  if (userRole === "admin") {
+    if (url.pathname === "/dashboard" || url.pathname === "/login" || url.pathname === "/register") {
+      return NextResponse.redirect(new URL("/dashboard", req.url));
+    }
+  }
 
-  // // Admin restrictions: Can only access /admin
-  // if (userRole === "admin") {
-  //   if (url.pathname === "/dashboard" || url.pathname === "/login" || url.pathname === "/register") {
-  //     return NextResponse.redirect(new URL("/admin", req.url));
-  //   }
-  // }
-
-  // return NextResponse.next();
+  return NextResponse.next();
 }
 
 // Apply middleware only to relevant routes
