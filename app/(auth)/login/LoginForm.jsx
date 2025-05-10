@@ -65,8 +65,8 @@ const LoginForm = () => {
   return (
     <section className="min-h-screen bg-[#0e100f] flex items-center justify-center px-4">
       <div className="bg-[#1a1c1a] w-full max-w-md p-8 rounded-2xl shadow-lg">
-        <h2 className="text-3xl font-bold text-white text-center mb-6">Welcome Back</h2>
-        {/* <p className="text-sm text-gray-400 text-center mb-8">Login to access our special menu</p> */}
+        <h2 className="text-3xl font-bold text-white text-center mb-6">Daily Savings Manager</h2>
+        <p className="text-lg text-gray-400 text-center mb-8">Login as Administrator to carry our DAC Manager Operations</p>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="space-y-2">
