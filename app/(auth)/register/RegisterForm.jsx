@@ -143,33 +143,33 @@ const RegisterForm = () => {
                 className="bg-[#2b2e2b] text-white border-[#2b2e2b] focus-visible:ring-yellow-600"
               />
             </div>
-          </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="role" className="text-gray-300">Role</Label>
-            <Select name="role" required>
-              <SelectTrigger className="bg-[#2b2e2b] text-white border-[#2b2e2b] focus-visible:ring-yellow-600 w-full rounded-lg">
-                <SelectValue placeholder="Select a role" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="staff">Staff</SelectItem>
-                <SelectItem value="manager">Manager</SelectItem>
-                <SelectItem value="admin">Admin</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+            <div className="space-y-2">
+              <Label htmlFor="role" className="text-gray-300">Role</Label>
+              <Select name="role" required>
+                <SelectTrigger className="bg-[#2b2e2b] text-white border-[#2b2e2b] focus-visible:ring-yellow-600 w-full rounded-lg">
+                  <SelectValue placeholder="Select a role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="staff">Staff</SelectItem>
+                  <SelectItem value="manager">Manager</SelectItem>
+                  <SelectItem value="admin">Admin</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="isActive" className="text-gray-300">Active Status</Label>
-            <Select name="isActive" required>
-              <SelectTrigger className="bg-[#2b2e2b] text-white border-[#2b2e2b] focus-visible:ring-yellow-600 w-full rounded-lg">
-                <SelectValue placeholder="Select active status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="true">Active</SelectItem>
-                <SelectItem value="false">Inactive</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="space-y-2">
+              <Label htmlFor="isActive" className="text-gray-300">Active Status</Label>
+              <Select name="isActive" required>
+                <SelectTrigger className="bg-[#2b2e2b] text-white border-[#2b2e2b] focus-visible:ring-yellow-600 w-full rounded-lg">
+                  <SelectValue placeholder="Select active status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="true">Active</SelectItem>
+                  <SelectItem value="false">Inactive</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           <Button
