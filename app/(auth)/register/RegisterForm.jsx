@@ -25,11 +25,11 @@ const RegisterForm = () => {
     try {
       setLoading(true);
 
-       // Debugging: Log all form data
-       for (let [key, value] of formData.entries()) {
+      // Debugging: Log all form data
+      for (let [key, value] of formData.entries()) {
         console.log(`${key}: ${value}`);
       }
-  
+
       const username = formData.get('username');
       const email = formData.get('email');
       const password = formData.get('password');
@@ -99,48 +99,50 @@ const RegisterForm = () => {
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="email" className="text-gray-300">Email</Label>
-            <Input
-              type="email"
-              id="email"
-              name="email"
-              required
-              className="bg-[#2b2e2b] text-white border-[#2b2e2b] focus-visible:ring-yellow-600"
-            />
-          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-gray-300">Email</Label>
+              <Input
+                type="email"
+                id="email"
+                name="email"
+                required
+                className="bg-[#2b2e2b] text-white border-[#2b2e2b] focus-visible:ring-yellow-600"
+              />
+            </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="phone" className="text-gray-300">Phone Number</Label>
-            <Input
-              type="tel"
-              id="phone"
-              name="phone"
-              required
-              className="bg-[#2b2e2b] text-white border-[#2b2e2b] focus-visible:ring-yellow-600"
-            />
-          </div>
+            <div className="space-y-2">
+              <Label htmlFor="phone" className="text-gray-300">Phone Number</Label>
+              <Input
+                type="tel"
+                id="phone"
+                name="phone"
+                required
+                className="bg-[#2b2e2b] text-white border-[#2b2e2b] focus-visible:ring-yellow-600"
+              />
+            </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="password" className="text-gray-300">Password</Label>
-            <Input
-              type="password"
-              id="password"
-              name="password"
-              required
-              className="bg-[#2b2e2b] text-white border-[#2b2e2b] focus-visible:ring-yellow-600"
-            />
-          </div>
+            <div className="space-y-2">
+              <Label htmlFor="password" className="text-gray-300">Password</Label>
+              <Input
+                type="password"
+                id="password"
+                name="password"
+                required
+                className="bg-[#2b2e2b] text-white border-[#2b2e2b] focus-visible:ring-yellow-600"
+              />
+            </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="confirmPassword" className="text-gray-300">Confirm Password</Label>
-            <Input
-              type="password"
-              id="confirmPassword"
-              name="confirmPassword"
-              required
-              className="bg-[#2b2e2b] text-white border-[#2b2e2b] focus-visible:ring-yellow-600"
-            />
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword" className="text-gray-300">Confirm Password</Label>
+              <Input
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                required
+                className="bg-[#2b2e2b] text-white border-[#2b2e2b] focus-visible:ring-yellow-600"
+              />
+            </div>
           </div>
 
           <div className="space-y-2">
