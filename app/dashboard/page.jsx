@@ -9,6 +9,7 @@ import RecentTransactions from "@/components/RecentTransactions/recent-transacti
 import SavingsSummary from "@/components/SavingSummary/savings-summary";
 import { getAllCustomers } from "@/controllers/getAllCustomers"; // Server action to fetch customers
 import { getTodayDeposits, getTodayWithdrawals, getTotalCustomers } from "@/controllers/dashboardStats"; // Server actions for stats
+import LogOutBtn from "@/components/Logout/LogOutBtn";
 
 export default async function Home() {
   const customers = await getAllCustomers(); // Fetch customers from the server
@@ -26,16 +27,23 @@ export default async function Home() {
 
   // Calculate net savings
   const netSavings = todayDeposits - todayWithdrawals;
-  
+
 
   return (
     <div className="container mx-auto py-8 px-4">
       <header className="mb-8">
-        <div className="flex items-center gap-2 mb-2">
-          <PiggyBank className="h-8 w-8 text-emerald-600" />
-          <h1 className="text-3xl font-bold">Daily Savings Manager</h1>
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            <PiggyBank className="h-8 w-8 text-emerald-600" />
+            <h1 className="text-3xl font-bold">Daily Savings Manager</h1>
+          </div>
+          <p className="text-muted-foreground">Track and manage your customers' daily savings</p>
         </div>
-        <p className="text-muted-foreground">Track and manage your customers' daily savings</p>
+        <div>
+          {/* Logout Button  */}
+          <LogOutBtn />
+        </div>
+
       </header>
 
       <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
@@ -56,7 +64,7 @@ export default async function Home() {
           </CardHeader>
           <CardContent>
             <Suspense fallback={<div>Loading summary...</div>}>
-            <SavingsSummary
+              <SavingsSummary
                 totalCustomers={totalCustomers}
                 todayDeposits={todayDeposits}
                 todayWithdrawals={todayWithdrawals}

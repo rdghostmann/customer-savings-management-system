@@ -55,11 +55,11 @@ export default function HomePage() {
                 Get Started Today
               </Link>
             </div>
-            <div className="md:w-1/2">
+            <div className="sm:w-1/2">
               <img
                 src="/hero-image.jpg"
                 alt="Business professionals reviewing financial documents"
-                className="rounded-lg shadow-xl"
+                className="rounded-lg object-cover object-center shadow-xl"
               />
             </div>
           </div>
