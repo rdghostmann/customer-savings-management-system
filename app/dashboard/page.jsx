@@ -32,17 +32,21 @@ export default async function Home() {
   return (
     <div className="container mx-auto py-8 px-4">
       <header className="mb-8">
-        <div>
-          <div className="flex items-center gap-2 mb-2">
-            <PiggyBank className="h-8 w-8 text-emerald-600" />
-            <h1 className="text-3xl font-bold">Daily Savings Manager</h1>
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <PiggyBank className="h-8 w-8 text-emerald-600" />
+              <h1 className="text-3xl font-bold">Daily Savings Manager</h1>
+            </div>
+            <p className="text-muted-foreground">Track and manage your customers' daily savings</p>
           </div>
-          <p className="text-muted-foreground">Track and manage your customers' daily savings</p>
+
+            {/* Logout Button  */}
+          <div>
+            <LogOutBtn />
+          </div>
         </div>
-        <div>
-          {/* Logout Button  */}
-          <LogOutBtn />
-        </div>
+
 
       </header>
 
