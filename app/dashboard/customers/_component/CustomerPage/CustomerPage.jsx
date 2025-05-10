@@ -12,6 +12,7 @@ import CreateForm from "@/components/Customer/CreateForm"; // Import the CreateF
 
 export default function CustomersPage({ customers }) {
   const [isOpen, setIsOpen] = useState(false); // State to control the dialog visibility
+  const [searchTerm, setSearchTerm] = useState(""); // State for search term
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("en-NG", {
@@ -19,6 +20,12 @@ export default function CustomersPage({ customers }) {
       currency: "NGN",
     }).format(amount);
   };
+
+  // Filter customers based on search term
+  const filteredCustomers = customers.filter((customer) =>
+    customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    customer.accountNumber.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="container mx-auto py-8 px-4">
@@ -55,7 +62,12 @@ export default function CustomersPage({ customers }) {
         <CardContent>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input placeholder="Search customers..." className="pl-10" />
+            <Input
+              placeholder="Search customers..."
+              className="pl-10"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
           </div>
         </CardContent>
       </Card>
@@ -66,7 +78,7 @@ export default function CustomersPage({ customers }) {
           <CardDescription>Manage your customer accounts</CardDescription>
         </CardHeader>
         <CardContent>
-          {customers.length > 0 ? (
+          {filteredCustomers.length > 0 ? (
             <Table>
               <TableHeader>
                 <TableRow>
@@ -78,7 +90,7 @@ export default function CustomersPage({ customers }) {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {customers.map((customer) => (
+                {filteredCustomers.map((customer) => (
                   <TableRow key={customer._id}>
                     <TableCell className="font-medium">{customer.name}</TableCell>
                     <TableCell>{customer.accountNumber}</TableCell>
