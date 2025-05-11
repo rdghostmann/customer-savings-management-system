@@ -4,6 +4,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
+import { deleteTransaction } from "@/controllers/TranStatsControllers";
 import { getRecentTransactions } from "@/controllers/getRecentTransactions";
 
 export default async function RecentTransactions() {
@@ -70,33 +71,12 @@ export default async function RecentTransactions() {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem asChild>
-                      <Button
-                        variant="ghost"
-                        // onClick={() => alert(`View details for ${transaction.customer?.name}`)}
-                      >
-                        View details
-                      </Button>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Button
-                        variant="ghost"
-                        // onClick={() => alert(`Edit transaction for ${transaction.customer?.name}`)}
-                      >
-                        Edit transaction
-                      </Button>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Button
-                        variant="ghost"
-                        className="text-red-600"
-                        // onClick={() => {
-                        //   if (confirm(`Are you sure you want to delete this transaction?`)) {
-                        //     // Handle deletion logic here
-                        //   }
-                        // }}
-                      >
-                        Delete transaction
-                      </Button>
+                      <form action={deleteTransaction}>
+                        <input type="hidden" name="transactionId" value={transaction._id.toString()} />
+                        <Button type="submit" variant="ghost" className="text-red-600">
+                          Delete transaction
+                        </Button>
+                      </form>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -108,3 +88,5 @@ export default async function RecentTransactions() {
     </div>
   );
 }
+
+               
