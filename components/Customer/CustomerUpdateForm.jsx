@@ -130,6 +130,7 @@ export default function CustomerUpdateForm({ customer, onClose }) {
           value={formData.balance}
           onChange={handleInputChange}
           required
+          disabled
         />
       </div>
       <Button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-700" disabled={loading}>
