@@ -1,17 +1,57 @@
-"use client"
+"use client";
 
-import { LineChart } from "lucide-react"
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import { useEffect, useState } from "react";
+import { getCustomerTransactions } from "@/controllers/getCustomerTransaction";
 
 export default function CustomerBalanceChart({ customerId }) {
-  // In a real app, this would fetch chart data from your backend
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchTransactions() {
+      setLoading(true);
+      const data = await getCustomerTransactions(customerId); // Fetch transactions
+      setTransactions(data);
+      setLoading(false);
+    }
+
+    fetchTransactions();
+  }, [customerId]);
+
+  // Prepare data for the LineChart
+  const chartData = transactions.map((transaction) => ({
+    date: new Date(transaction.date).toLocaleDateString(), // Format date
+    balance: transaction.balance, // Use balance for the Y-axis
+  }));
 
   return (
-    <div className="h-full w-full flex flex-col items-center justify-center bg-slate-50 rounded-md">
-      <LineChart className="h-16 w-16 text-slate-300" />
-      <p className="mt-2 text-sm text-muted-foreground">Balance history chart will appear here</p>
-      <p className="text-xs text-muted-foreground">
-        In a real application, this would show a line chart of the customer's balance over time
-      </p>
+    <div className="h-full w-full flex flex-col items-center justify-center bg-slate-50 rounded-md p-4">
+      {loading ? (
+        <p className="text-sm text-muted-foreground">Loading balance history...</p>
+      ) : transactions.length > 0 ? (
+        <ResponsiveContainer width="100%" height={300}>
+          <LineChart data={chartData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="date" />
+            <YAxis />
+            <Tooltip />
+            <Line type="monotone" dataKey="balance" stroke="#8884d8" strokeWidth={2} />
+          </LineChart>
+        </ResponsiveContainer>
+      ) : (
+        <div className="text-center">
+          <p className="text-sm text-muted-foreground">No transaction data available.</p>
+        </div>
+      )}
     </div>
-  )
+  );
 }

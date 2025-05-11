@@ -1,6 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft, Calendar, Download, MessageSquareShare, Phone, User } from "lucide-react";
-
+import { ArrowLeft, Calendar, CheckCircle, Clock, Hash, MapPin, MessageSquareShare, Phone, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -11,6 +10,7 @@ import CustomerTransactionHistory from "@/components/Customer/customer-transacti
 import CustomerBalanceChart from "@/components/Customer/customer-balance-chart";
 import { format } from "date-fns"; // Import date-fns for date formatting
 import dynamic from "next/dynamic";
+import EditCustomerBtn from "@/components/EditCustomerBtn/EditCustomerBtn";
 
 const SingleCustomerMessage = dynamic(() =>
   import("@/components/Customer/single-customer-message")
@@ -59,9 +59,11 @@ export default async function CustomerDetailPage({ params }) {
               <ArrowLeft className="h-4 w-4" />
             </Link>
           </Button>
-          <div>
+          <div className="relative">
             <h1 className="text-2xl font-bold">{customer.name}</h1>
             <p className="text-muted-foreground">{customer.accountNumber}</p>
+            {/* Edit Customer details  */}
+          <EditCustomerBtn customer={customer}  />
           </div>
         </div>
       </div>
@@ -104,8 +106,8 @@ export default async function CustomerDetailPage({ params }) {
       <Tabs defaultValue="statement" className="space-y-4">
         <TabsList>
           <TabsTrigger value="statement">Statement of Account</TabsTrigger>
-          <TabsTrigger value="analytics">Account Analytics</TabsTrigger>
-          <TabsTrigger value="message"> <MessageSquareShare  className="animate-bounce mr-2 h-4 w-4" /> Send Message</TabsTrigger>
+          <TabsTrigger value="analytics">Balance Analytics</TabsTrigger>
+          <TabsTrigger value="message"> <MessageSquareShare className="animate-bounce mr-2 h-4 w-4" /> Send Message</TabsTrigger>
           <TabsTrigger value="details">Personal Details</TabsTrigger>
         </TabsList>
 
@@ -130,18 +132,48 @@ export default async function CustomerDetailPage({ params }) {
             <CardContent>
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
-                  <h3 className="font-medium mb-2">Contact Details</h3>
-                  <p className="text-sm">Full Name: {customer.name}</p>
-                  <p className="text-sm">Phone: {customer.phone}</p>
-                  <p className="text-sm">Email: {customer.email}</p>
-                  <p className="text-sm">Address: {customer.address}</p>
+                  <h3 className="font-medium mb-2 flex items-center gap-2">
+                    <Phone className="h-5 w-5 text-emerald-600" />
+                    Contact Details
+                  </h3>
+                  <p className="text-sm flex items-center gap-2">
+                    <User className="h-4 w-4 text-muted-foreground" />
+                    Full Name: {customer.name}
+                  </p>
+                  <p className="text-sm flex items-center gap-2">
+                    <Phone className="h-4 w-4 text-muted-foreground" />
+                    Phone: {customer.phone}
+                  </p>
+                  <p className="text-sm flex items-center gap-2">
+                    <MessageSquareShare className="h-4 w-4 text-muted-foreground" />
+                    Email: {customer.email}
+                  </p>
+                  <p className="text-sm flex items-center gap-2">
+                    <MapPin className="h-4 w-4 text-muted-foreground" />
+                    Address: {customer.address}
+                  </p>
                 </div>
                 <div>
-                  <h3 className="font-medium mb-2">Account Information</h3>
-                  <p className="text-sm">Account Number: {customer.accountNumber}</p>
-                  <p className="text-sm">Join Date: {format(new Date(customer.joinDate), "dd/MM/yyyy")}</p>
-                  <p className="text-sm">Last Activity: {format(new Date(customer.lastActivity), "dd/MM/yyyy")}</p>
-                  <p className="text-sm">Status: {customer.status}</p>
+                  <h3 className="font-medium mb-2 flex items-center gap-2">
+                    <User className="h-5 w-5 text-emerald-600" />
+                    Account Information
+                  </h3>
+                  <p className="text-sm flex items-center gap-2">
+                    <Hash className="h-4 w-4 text-muted-foreground" />
+                    Account Number: {customer.accountNumber}
+                  </p>
+                  <p className="text-sm flex items-center gap-2">
+                    <Calendar className="h-4 w-4 text-muted-foreground" />
+                    Join Date: {format(new Date(customer.joinDate), "dd/MM/yyyy")}
+                  </p>
+                  <p className="text-sm flex items-center gap-2">
+                    <Clock className="h-4 w-4 text-muted-foreground" />
+                    Last Activity: {format(new Date(customer.lastActivity), "dd/MM/yyyy")}
+                  </p>
+                  <p className="text-sm flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-muted-foreground" />
+                    Status: {customer.status}
+                  </p>
                 </div>
               </div>
             </CardContent>
