@@ -13,9 +13,9 @@ import {
   Pie,
   Cell,
 } from "recharts";
-import { ArrowLeft, Download } from "lucide-react";
+import { ArrowLeft, Download, LineChartIcon, PieChartIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from "next/link";
 
@@ -132,7 +132,40 @@ export default function ReportsPage({ customers, depositsResult, withdrawalsResu
                 </LineChart>
               </ResponsiveContainer>
             </CardContent>
+             <CardFooter className="flex justify-between">
+              <Button variant="outline">View Detailed Analysis</Button>
+              <Button variant="outline">
+                <Download className="mr-2 h-4 w-4" />
+                Download Report
+              </Button>
+            </CardFooter>
           </Card>
+          <div className="grid gap-4 md:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle>Savings by Customer Type</CardTitle>
+                <CardDescription>Distribution of savings across customer segments</CardDescription>
+              </CardHeader>
+              <CardContent className="h-64 flex items-center justify-center bg-slate-50 rounded-md">
+                <div className="text-center">
+                  <PieChartIcon className="mx-auto h-16 w-16 text-slate-300" />
+                  <p className="mt-2 text-sm text-muted-foreground">Pie chart will appear here</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Transaction Volume</CardTitle>
+                <CardDescription>Number of transactions over time</CardDescription>
+              </CardHeader>
+              <CardContent className="h-64 flex items-center justify-center bg-slate-50 rounded-md">
+                <div className="text-center">
+                  <LineChartIcon className="mx-auto h-16 w-16 text-slate-300" />
+                  <p className="mt-2 text-sm text-muted-foreground">Line chart will appear here</p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
 
         {/* Deposits Tab */}

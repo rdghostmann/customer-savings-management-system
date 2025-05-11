@@ -1,18 +1,22 @@
 "use client";
+
 import { useState } from "react";
-import { ArrowLeft, CirclePlus, Search } from "lucide-react";
+import { ArrowLeft, CirclePlus, MoreHorizontal, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { format } from "date-fns"; // Import date-fns for consistent date formatting
 import Link from "next/link";
 import CreateForm from "@/components/Customer/CreateForm"; // Import the CreateForm component
+import { deleteCustomer } from "@/controllers/deleteCustomer";
 
 export default function CustomersPage({ customers }) {
   const [isOpen, setIsOpen] = useState(false); // State to control the dialog visibility
   const [searchTerm, setSearchTerm] = useState(""); // State for search term
+  const [customerList, setCustomerList] = useState(customers); // State for customer list
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("en-NG", {
@@ -22,10 +26,21 @@ export default function CustomersPage({ customers }) {
   };
 
   // Filter customers based on search term
-  const filteredCustomers = customers.filter((customer) =>
+  const filteredCustomers = customerList.filter((customer) =>
     customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     customer.accountNumber.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleDeleteCustomer = async (customerId) => {
+    try {
+      await deleteCustomer({ customerId }); // Call server action to delete customer
+      setCustomerList((prev) => prev.filter((customer) => customer._id !== customerId)); // Update state
+      // toast.success("Customer deleted successfully");
+    } catch (error) {
+      console.error("Error deleting customer:", error);
+      // toast.error("Failed to delete customer");
+    }
+  };
 
   return (
     <div className="container mx-auto py-8 px-4">
@@ -99,11 +114,35 @@ export default function CustomersPage({ customers }) {
                     </TableCell>
                     <TableCell className="text-right font-medium">{formatCurrency(customer.balance)}</TableCell>
                     <TableCell className="text-right">
-                      <Link href={`/dashboard/customers/${customer._id}`}>
-                        <Button variant="outline" size="sm">
-                          View Details
-                        </Button>
-                      </Link>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" className="h-8 w-8 p-0">
+                            <span className="sr-only">Open menu</span>
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem asChild>
+                            <Link href={`/dashboard/customers/${customer._id}`}>
+                              <Button variant="outline" size="sm">
+                                View Details
+                              </Button>
+                            </Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem asChild>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="text-red-600"
+                                onClick={() => handleDeleteCustomer(customer._id)}
+                              >
+                                Delete Customer
+                              </Button>
+                            {/* </Link> */}
+
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </TableCell>
                   </TableRow>
                 ))}

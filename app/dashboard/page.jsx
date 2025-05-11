@@ -72,7 +72,8 @@ export default async function Home() {
                 todayDeposits={todayDeposits}
                 todayWithdrawals={todayWithdrawals}
                 netSavings={netSavings}
-              />            </Suspense>
+              />
+            </Suspense>
           </CardContent>
           <CardFooter className="flex flex-col sm:flex-row gap-2">
             <Button variant="outline" size="sm" className="w-full" asChild>
