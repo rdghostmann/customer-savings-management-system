@@ -123,7 +123,7 @@ export default function CustomersPage({ customers }) {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem asChild>
-                            <Link href={`/dashboard/customers/${customer._id}`}>
+                            <Link href={`/dashboard/customers/${customer._id.toString()}`}>
                               <Button variant="outline" size="sm">
                                 View Details
                               </Button>
@@ -134,7 +134,7 @@ export default function CustomersPage({ customers }) {
                                 variant="outline"
                                 size="sm"
                                 className="text-red-600"
-                                onClick={() => handleDeleteCustomer(customer._id)}
+                                onClick={() => handleDeleteCustomer(customer._id.toString())}
                               >
                                 Delete Customer
                               </Button>

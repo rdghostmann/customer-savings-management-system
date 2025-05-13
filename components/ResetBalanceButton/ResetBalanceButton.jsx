@@ -1,7 +1,7 @@
 "use client";
 
-import { resetAllCustomerBalances } from "@/controllers/resetBalances";
 import { Button } from "@/components/ui/button";
+import { resetAllCustomerBalances } from "@/controllers/resetAllCustomerBalances";
 import { useState } from "react";
 
 export default function ResetBalancesButton() {
