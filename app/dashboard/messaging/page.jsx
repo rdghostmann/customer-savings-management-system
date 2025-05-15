@@ -1,15 +1,15 @@
 import React from "react";
 import MessagingPage from "./MessagingPage";
-import { getAllCustomers } from "@/controllers/getAllCustomers"; // Import the server action
+import { getAllCustomers } from "@/controllers/getAllCustomers";
+import { getTemplateMsg } from "@/controllers/getTemplateMsg";
 
 export default async function Page() {
-  // Fetch customers using the server action
   const customers = await getAllCustomers();
+  const templateData = await getTemplateMsg();
 
   return (
     <div className="container mx-auto py-8 px-4">
-      {/* Pass the fetched customers as props to the MessagingPage component */}
-      <MessagingPage customers={customers} />
+      <MessagingPage templateData={templateData} customers={customers} />
     </div>
   );
 }

@@ -6,8 +6,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import BalanceNotificationMessage from "@/components/Balance-Notification-Message/balance-notification-message";
 import MessageTemplates from "@/components/MessageTemplates/message-templates";
 import CustomerMessagingForm from "@/components/Customer/customer-messaging-form";
+import CreateNewTemplate from "./CreateNewTemplate/CreateNewTemplate";
 
-export default async function MessagingPage({customers}) {
+export default async function MessagingPage({customers, templateData}) {
 
   return (
     <div className="container mx-auto py-8 px-4">
@@ -91,12 +92,10 @@ export default async function MessagingPage({customers}) {
               <CardDescription>Manage your saved message templates</CardDescription>
             </CardHeader>
             <CardContent>
-              <MessageTemplates customers={customers} /> {/* Pass customers as props */}
+              <MessageTemplates templateData={templateData} customers={customers} /> {/* Pass customers as props */}
             </CardContent>
             <CardFooter>
-              <Button className="bg-emerald-600 hover:bg-emerald-700">
-                <span className="mr-2">+</span> Create New Template
-              </Button>
+             <CreateNewTemplate />
             </CardFooter>
           </Card>
         </TabsContent>

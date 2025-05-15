@@ -1,77 +1,78 @@
 "use client";
 
 import { useState } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { CheckCircle2, Info, MessageSquare } from "lucide-react";
-
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Switch } from "@/components/ui/switch";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Input } from "@/components/ui/input";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Search } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
-  messageType: z.enum(["all", "filtered", "selected"], {
-    required_error: "Please select a message type.",
-  }),
-  minBalance: z.coerce.number().optional(),
-  selectedCustomers: z.array(z.string()).optional(),
-  message: z.string().min(10, {
-    message: "Message must be at least 10 characters.",
-  }),
-  includeBalance: z.boolean().default(true),
-  scheduleForLater: z.boolean().default(false),
+  customerId: z.string().min(1, { message: "Please select a customer." }),
+  message: z.string().min(10, { message: "Message must be at least 10 characters." }),
 });
 
-export default function CustomerMessagingForm({ customers, isCustomMessage = false }) {
-  const [isSent, setIsSent] = useState(false);
+export default function CustomerMessagingForm({ customers }) {
   const [isLoading, setIsLoading] = useState(false);
-
-  const defaultMessage = isCustomMessage
-    ? "Dear customer, we would like to inform you that..."
-    : "Dear customer, your current balance is {{balance}}. Thank you for saving with us!";
+  const [open, setOpen] = useState(false);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      messageType: "all",
-      message: defaultMessage,
-      includeBalance: !isCustomMessage,
-      scheduleForLater: false,
+      customerId: "",
+      message: "",
     },
   });
 
-  const messageType = form.watch("messageType");
-  const includeBalance = form.watch("includeBalance");
+  const { setValue, watch } = form;
+  const selectedCustomerId = watch("customerId");
 
-  function onSubmit(values) {
+  const onSubmit = async (values) => {
     setIsLoading(true);
 
-    // Simulate API call
-    setTimeout(() => {
-      console.log(values);
-      setIsLoading(false);
-      setIsSent(true);
+    try {
+      const selectedCustomer = customers.find((c) => c._id === values.customerId);
+      if (!selectedCustomer) {
+        toast.error("Selected customer not found.");
+        setIsLoading(false);
+        return;
+      }
 
-      // Reset form after 3 seconds
-      setTimeout(() => {
-        setIsSent(false);
-        if (!isCustomMessage) {
-          form.reset({
-            messageType: "all",
-            message: defaultMessage,
-            includeBalance: true,
-            scheduleForLater: false,
-          });
-        }
-      }, 3000);
-    }, 1500);
-  }
+      const personalizedMessage = values.message
+        .replace("{{name}}", selectedCustomer.name)
+        .replace("{{balance}}", formatCurrency(selectedCustomer.balance));
+
+      const response = await fetch("/api/kudisms", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          recipients: [selectedCustomer.phone],
+          message: personalizedMessage,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        toast.success(result.message || "SMS sent successfully.");
+        form.reset();
+      } else {
+        toast.error(result.error || "Failed to send SMS.");
+      }
+    } catch (error) {
+      console.error("Error sending SMS:", error);
+      toast.error("An error occurred while sending SMS.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("en-NG", {
@@ -80,156 +81,87 @@ export default function CustomerMessagingForm({ customers, isCustomMessage = fal
     }).format(amount);
   };
 
-  const getBalanceForPreview = () => {
-    const defaultBalance = 2500; // Default balance for preview
-    return formatCurrency(defaultBalance);
-  };
-
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        {isSent && (
-          <Alert className="bg-emerald-50 text-emerald-800 border-emerald-200">
-            <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-            <AlertTitle>Success!</AlertTitle>
-            <AlertDescription>Your messages have been sent successfully to the selected customers.</AlertDescription>
-          </Alert>
-        )}
-
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 max-w-lg mx-auto">
+        {/* Customer Search & Select */}
         <FormField
           control={form.control}
-          name="messageType"
+          name="customerId"
           render={({ field }) => (
-            <FormItem className="space-y-3">
-              <FormLabel>Recipients</FormLabel>
-              <FormControl>
-                <RadioGroup
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  className="flex flex-col space-y-1"
-                >
-                  <FormItem className="flex items-center space-x-3 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="all" />
-                    </FormControl>
-                    <FormLabel className="font-normal">All customers ({customers.length})</FormLabel>
-                  </FormItem>
-                  <FormItem className="flex items-center space-x-3 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="filtered" />
-                    </FormControl>
-                    <FormLabel className="font-normal">Customers with minimum balance</FormLabel>
-                  </FormItem>
-                  <FormItem className="flex items-center space-x-3 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="selected" />
-                    </FormControl>
-                    <FormLabel className="font-normal">Selected customers</FormLabel>
-                  </FormItem>
-                </RadioGroup>
-              </FormControl>
+            <FormItem className="flex flex-col">
+              <FormLabel>Customer</FormLabel>
+              <Popover open={open} onOpenChange={setOpen}>
+                <PopoverTrigger asChild>
+                  <FormControl>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={open}
+                      className={cn("justify-between", !field.value && "text-muted-foreground")}
+                    >
+                      {field.value
+                        ? customers.find((customer) => customer._id === field.value)?.name
+                        : "Select customer"}
+                      <Search className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </FormControl>
+                </PopoverTrigger>
+                <PopoverContent className="p-0">
+                  <Command>
+                    <CommandInput placeholder="Search customer..." />
+                    <CommandList>
+                      <CommandEmpty>No customer found.</CommandEmpty>
+                      <CommandGroup>
+                        {customers.map((customer) => (
+                          <CommandItem
+                            key={customer._id}
+                            value={customer.name}
+                            onSelect={() => {
+                              setValue("customerId", customer._id);
+                              setOpen(false);
+                            }}
+                          >
+                            {customer.name}
+                            <span className="ml-2 text-xs text-muted-foreground">{customer.accountNumber}</span>
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        {messageType === "filtered" && (
-          <FormField
-            control={form.control}
-            name="minBalance"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Minimum Balance</FormLabel>
-                <FormControl>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
-                    <input
-                      type="number"
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 pl-8 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                      placeholder="1000"
-                      {...field}
-                    />
-                  </div>
-                </FormControl>
-                <FormDescription>Only send to customers with at least this balance</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        )}
-
-        {messageType === "selected" && (
-          <FormField
-            control={form.control}
-            name="selectedCustomers"
-            render={() => (
-              <FormItem>
-                <div className="mb-4">
-                  <FormLabel className="text-base">Select Customers</FormLabel>
-                  <FormDescription>Choose which customers should receive this message</FormDescription>
-                </div>
-                <div className="rounded-md border">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead className="w-[50px]">Select</TableHead>
-                        <TableHead>Customer</TableHead>
-                        <TableHead>Account</TableHead>
-                        <TableHead>Phone</TableHead>
-                        <TableHead className="text-right">Balance</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {customers.map((customer) => (
-                        <TableRow key={customer.id}>
-                          <TableCell>
-                            <Checkbox
-                              checked={form.getValues("selectedCustomers")?.includes(customer.id)}
-                              onCheckedChange={(checked) => {
-                                const selected = form.getValues("selectedCustomers") || [];
-                                form.setValue(
-                                  "selectedCustomers",
-                                  checked ? [...selected, customer.id] : selected.filter((id) => id !== customer.id)
-                                );
-                              }}
-                            />
-                          </TableCell>
-                          <TableCell className="font-medium">{customer.name}</TableCell>
-                          <TableCell>{customer.accountNumber}</TableCell>
-                          <TableCell>{customer.phone}</TableCell>
-                          <TableCell className="text-right">{formatCurrency(customer.balance)}</TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        )}
-
+        {/* Message */}
         <FormField
+        className=""
           control={form.control}
           name="message"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Message</FormLabel>
               <FormControl>
-                <Textarea placeholder="Type your message here..." className="min-h-[120px]" {...field} />
+                <Textarea
+                  placeholder="Type your message here... Use {{name}} and {{balance}} for personalization."
+                  className="min-h-[120px]"
+                  {...field}
+                />
               </FormControl>
-              {!isCustomMessage && (
-                <FormDescription>
-                  Use <code>{"{{balance}}"}</code> to include the customer's current balance in the message.
-                </FormDescription>
-              )}
               <FormMessage />
             </FormItem>
           )}
         />
 
-        <Button type="submit" className="w-full md:w-auto bg-emerald-600 hover:bg-emerald-700" disabled={isLoading}>
-          {isLoading ? "Processing..." : "Send Messages"}
+        <Button
+          type="submit"
+          className="w-full bg-emerald-600 hover:bg-emerald-700"
+          disabled={isLoading}
+        >
+          {isLoading ? "Sending..." : "Send SMS"}
         </Button>
       </form>
     </Form>

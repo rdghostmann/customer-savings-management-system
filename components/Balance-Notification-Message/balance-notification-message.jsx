@@ -13,6 +13,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { toast } from "sonner"; // Import toast for notifications
 
 const formSchema = z.object({
   messageType: z.enum(["all", "positive"], {
@@ -50,19 +51,54 @@ export default function BalanceNotificationMessage({ customers = [] }) {
     setIsLoading(true);
 
     try {
-      // Simulate API call
-      console.log("Submitting values:", values);
-      setTimeout(() => {
+      // Filter recipients based on message type
+      const recipients =
+        messageType === "all"
+          ? customers.map((c) => c.phone)
+          : customers.filter((c) => c.balance > 0).map((c) => c.phone);
+
+      // Replace placeholders in the message
+      const personalizedMessage = recipients.map((phone) => {
+        const customer = customers.find((c) => c.phone === phone);
+        let msg = message;
+        if (includePersonalName) {
+          msg = msg.replace("{{name}}", customer?.name || "Customer");
+        } else {
+          msg = msg.replace("{{name}}", "Customer");
+        }
+        msg = msg.replace("{{balance}}", formatCurrency(customer?.balance || 0));
+        return { phone, message: msg };
+      });
+
+      // Send SMS via KUDI SMS API
+      const response = await fetch("/api/kudisms", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          recipients: personalizedMessage.map((item) => item.phone),
+          message: personalizedMessage[0]?.message, // Use the first message as a template
+        }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        toast.success(result.message || "SMS sent successfully.");
         setIsSent(true);
-        setIsLoading(false);
 
         // Reset form after 3 seconds
         setTimeout(() => {
           setIsSent(false);
         }, 3000);
-      }, 1500);
+      } else {
+        toast.error(result.error || "Failed to send SMS.");
+      }
     } catch (error) {
-      console.error("Error submitting form:", error);
+      console.error("Error sending SMS:", error);
+      toast.error("An error occurred while sending SMS.");
+    } finally {
       setIsLoading(false);
     }
   };
